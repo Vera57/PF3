@@ -92,8 +92,8 @@ public class Main {
         // des Fahrzeugs ermittelt und verschickt. Die Sensordaten sollen
         // an das Topic Utils.MQTT_TOPIC_NAME + "/" + vehicleId gesendet werden.
         Timer timer = new Timer(true);
-        timer.scheduleAtFixedRate(new SensorMessage(), 0, 1000);
-        client.publish(Utils.MQTT_TOPIC_NAME+"/"+vehicleId);
+        /*timer.scheduleAtFixedRate(new SensorMessage(), 0, 1000);
+        client.publish(Utils.MQTT_TOPIC_NAME+"/"+vehicleId,statusMessage);*/
         
         Vehicle vehicle = new Vehicle(vehicleId, waypoints);
         vehicle.startVehicle();
