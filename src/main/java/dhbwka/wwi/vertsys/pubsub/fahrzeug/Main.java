@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 /**
@@ -61,20 +63,38 @@ public class Main {
         // LastWill-Nachricht gesendet wird, die auf den Verbindungsabbruch
         // hinweist. Die Nachricht soll eine "StatusMessage" sein, bei der das
         // Feld "type" auf "StatusType.CONNECTION_LOST" gesetzt ist.
-        
-        
+        StatusMessage statusMessage=new StatusMessage();
+        MqttConnectOptions option=new MqttConnectOptions();
+        option.setCleanSession(false);
+        if(statusMessage.type==StatusType.CONNECTION_LOST){
+            option.setWill(vehicleId, "Disconnected!".getBytes(), 0, false);
+        }        
         // Die Nachricht muss dem MqttConnectOptions-Objekt übergeben werden
         // und soll an das Topic Utils.MQTT_TOPIC_NAME gesendet werden.
         
         // TODO: Verbindung zum MQTT-Broker herstellen.
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setCleanSession(true);
+        String clientId = "Fahrzeug" + System.currentTimeMillis();
 
+        System.out.println("Client ID: " + clientId);
+        System.out.println("Starte Empfang. Drücke ENTER zum Beenden.");
+        System.out.println();
+        MqttClient client = new MqttClient(Utils.MQTT_BROKER_ADDRESS,clientId);
+        client.connect(options);
         // TODO: Statusmeldung mit "type" = "StatusType.VEHICLE_READY" senden.
         // Die Nachricht soll soll an das Topic Utils.MQTT_TOPIC_NAME gesendet
         // werden.
-        
-        // TODO: Thread starten, der jede Sekunde die aktuellen Sensorwerte
+        //StatusMessage statusMessage=new StatusMessage();
+        statusMessage.type=StatusType.VEHICLE_READY; 
+        //client.publish(Utils.MQTT_TOPIC_NAME, statusMessage);
+       // TODO: Thread starten, der jede Sekunde die aktuellen Sensorwerte
         // des Fahrzeugs ermittelt und verschickt. Die Sensordaten sollen
         // an das Topic Utils.MQTT_TOPIC_NAME + "/" + vehicleId gesendet werden.
+        Timer timer = new Timer(true);
+        timer.scheduleAtFixedRate(new SensorMessage(), 0, 1000);
+        client.publish(Utils.MQTT_TOPIC_NAME+"/"+vehicleId);
+        
         Vehicle vehicle = new Vehicle(vehicleId, waypoints);
         vehicle.startVehicle();
 

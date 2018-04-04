@@ -12,6 +12,7 @@ package dhbwka.wwi.vertsys.pubsub.fahrzeug;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.nio.charset.StandardCharsets;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 /**
  * Datentransferklasse mit einer Statusmeldung. Die Klasse beinhaltet gleich
@@ -19,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * JSON-Daten wiederherzustellen. Somit eignet sich diese Klasse für den Versand
  * via MQTT.
  */
-public class StatusMessage {
+public class StatusMessage{
 
     // Zeitstempel
     public long time = System.currentTimeMillis();
